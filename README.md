@@ -1,2 +1,2 @@
 # xum
- Extremely Universal Manager - A script that unifies all package managers
+Extremely Universal Manager - A cli app that unifies all Node package managers.
