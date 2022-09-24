@@ -1,42 +1,30 @@
-import preferredPM from 'preferred-pm';
 import { Command } from 'commander';
-import { exec } from 'child_process';
+import { addHandler, infoHandler, installHandler, removeHandler } from './handlers';
 
 const program = new Command('xum');
 
 program
-  .description('Extremely Universal Manager - A script that unifies all package managers')
+  .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
   .version('1.0.0-alpha.0');
+
+program
+    .command("info")
+    .description("Print detected package manager")
+    .action(infoHandler);
 
 program
   .command('install')
   .description('Install dependencies')
-  .action(() => {
-    const pm = preferredPM(__dirname);
-    exec(`${pm} install`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
-    console.log('Installing dependencies...');
-  });
-
-// program
-//     .command('run')
-//     .description('run command')
-//     .action((r: any) => {
-//         const pm = preferredPM(__dirname);
-//         exec(`${pm} ${r}`, (error, stdout, stderr) => {
-//             if (error) {
-//                 console.error(`exec error: ${error}`);
-//                 return;
-//             }
-//             console.log(`stdout: ${stdout}`);
-//             console.error(`stderr: ${stderr}`);
-//         });
-//     })
+  .action(installHandler);
+  
+program
+  .command('add')
+  .description('Add dependencies')
+  .action(addHandler);
+  
+program
+    .command("remove")
+    .description("Remove dependencies")
+    .action(removeHandler)
 
 program.parse(process.argv);
