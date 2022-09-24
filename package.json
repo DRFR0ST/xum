@@ -2,14 +2,15 @@
   "name": "xum",
   "version": "1.0.0-alpha.0",
   "description": "Extremely Universal Manager - A script that unifies all package managers",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "repository": "https://github.com/DRFR0ST/xum",
   "author": "Mike Eling <mike.eling97@gmail.com>",
   "license": "MIT",
   "private": true,
   "bin": {
-    "xum": "dist/index.js"
+    "xum": "./bin/xum"
   },
+  "preferGlobal": true,
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js"
