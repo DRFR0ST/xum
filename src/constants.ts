@@ -52,3 +52,18 @@ export const MAP_REMOVE_COMMAND: Record<PackageManager, PackageManagerCommand> =
     flags: [],
   },
 };
+
+export const MAP_UPDATE_COMMAND: Record<PackageManager, PackageManagerCommand> = {
+  npm: {
+    command: 'update',
+    flags: [],
+  },
+  yarn: {
+    command: 'upgrade',
+    flags: [],
+  },
+  pnpm: {
+    command: 'update',
+    flags: [],
+  },
+};
