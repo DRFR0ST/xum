@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import emoji from 'node-emoji';
 import {
   addDevHandler,
   addHandler,
@@ -100,6 +101,11 @@ program
         flag === '--manager' || flag === '-m' || arr[i - 1] === '--manager' || arr[i - 1] === '-m'
       );
     })[1] ?? undefined) as PackageManager;
+
+    console.warn(
+      emoji.emojify(':warning:  '),
+      'Running an unsupported wildcard command. Make sure to specify the package manager using --manager <npm|yarn|pnpm> flag.',
+    );
 
     execute('', [...cmd, ...flags], forcedManager);
   })
