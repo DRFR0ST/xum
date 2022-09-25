@@ -1,7 +1,9 @@
 import { exec, ExecException } from 'node:child_process';
 import preferredPM from 'preferred-pm';
 import { PackageManager } from './types';
+import fs from 'fs';
 import path from 'node:path';
+import { PM_LOCK_FILE } from './constants';
 
 const __dirname = path.dirname('./');
 
@@ -25,6 +27,8 @@ export async function execute(
 
   if (typeof command !== 'string') command = command[pm.name];
 
+  reportAdditionalManagers(pm.name);
+  console.log('Executing', `${pm.name} ${command} ${args.join(' ')}`);
   return exec(`${pm.name} ${command} ${args.join(' ')}`, execCallback);
 }
 
@@ -46,4 +50,15 @@ export const packageManagerInfo = async () => {
   }
   console.log('Package manager: ', pm?.name);
   console.log('Version: ', pm?.version);
+};
+
+export const reportAdditionalManagers = (manager: PackageManager) => {
+  (Object.keys(PM_LOCK_FILE) as PackageManager[]).forEach((pm: PackageManager) => {
+    if (manager !== pm && fileExists('./' + PM_LOCK_FILE[pm]))
+      console.warn(`Using ${manager} but a ${PM_LOCK_FILE[pm]} file was found.`);
+  });
+};
+
+export const fileExists = (path: string) => {
+  return fs.existsSync(path);
 };
