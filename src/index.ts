@@ -5,7 +5,7 @@ import {
   installHandler,
   removeHandler,
   runHandler,
-  wildHandler,
+  wildHandle1.0.0-alpha.3
 } from './handlers';
 
 const program = new Command('xum');
