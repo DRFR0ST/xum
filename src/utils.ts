@@ -1,14 +1,16 @@
-import { exec, ExecException } from 'node:child_process';
+import { ExecException, spawn } from 'node:child_process';
 import preferredPM from 'preferred-pm';
-import { PackageManager } from './types';
+import { PackageManager, PackageManagerCommand } from './types';
 import fs from 'fs';
 import path from 'node:path';
-import { PM_LOCK_FILE } from './constants';
+import { PM_LOCK_FILE, SUPPORTED_MANAGERS } from './constants';
+import emoji from 'node-emoji';
+import inquirer from 'inquirer';
 
 const __dirname = path.dirname('./');
 
 export async function execute(
-  command: string | Record<PackageManager, string>,
+  command: string | Record<PackageManager, PackageManagerCommand>,
   args: string[] = [],
   manager?: PackageManager,
 ) {
@@ -17,28 +19,62 @@ export async function execute(
   if (!manager) {
     pm = (await preferredPM(__dirname)) as typeof pm;
 
-    if (!pm) throw new Error('Package manager could not be identified.');
+    if (!pm) {
+      await execute(command, args, await promptForPackageManager());
+      return;
+    }
   } else {
-    pm = {
-      name: manager,
-      version: '-',
-    };
+    if (!SUPPORTED_MANAGERS.includes(manager)) {
+      await execute(command, args, await promptForPackageManager());
+      return;
+    } else {
+      pm = {
+        name: manager,
+        version: '-',
+      };
+    }
+  }
+  let cmd: string = command as string;
+  let flags: string[] = [];
+
+  if (typeof command !== 'string') {
+    flags = command[pm.name].flags;
+    cmd = command[pm.name].command;
   }
 
-  if (typeof command !== 'string') command = command[pm.name];
-
   reportAdditionalManagers(pm.name);
-  console.log('Executing', `${pm.name} ${command} ${args.join(' ')}`);
-  return exec(`${pm.name} ${command} ${args.join(' ')}`, execCallback);
+  console.log(
+    emoji.emojify(':hourglass:  '),
+    'Executing',
+    `${pm.name} ${cmd} ${args.join(' ')} ${flags.join(' ')}`,
+  );
+
+  const process = spawn(pm.name, [cmd, ...args, ...flags], { shell: true, stdio: 'inherit' });
+
+  process.stdout?.on('data', function (data) {
+    console.log(emoji.emojify(':information_source:  '), data.toString());
+  });
+
+  process.stderr?.on('data', function (data) {
+    console.log(emoji.emojify(':warning:  '), data.toString());
+  });
+
+  process.on('exit', function (code) {
+    if (code === 0) {
+      console.log(emoji.emojify(':white_check_mark:  Done'));
+    } else {
+      console.log(emoji.emojify(':x:  '), code?.toString());
+    }
+  });
 }
 
 export const execCallback = (error: ExecException | null, stdout: string, stderr: string) => {
   if (error) {
-    console.error(`exec error: ${error}`);
+    console.error(`An error occurred during command execution.`, error);
     return;
   }
-  console.log(`${stdout}`);
-  console.error(`${stderr}`);
+  console.log(stdout);
+  console.error(stderr);
 };
 
 export const packageManagerInfo = async () => {
@@ -61,4 +97,18 @@ export const reportAdditionalManagers = (manager: PackageManager) => {
 
 export const fileExists = (path: string) => {
   return fs.existsSync(path);
+};
+
+export const promptForPackageManager = async () => {
+  return (
+    await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'pick-pm',
+        message: 'Package manager could not be detected. Which one should be used instead?',
+        default: 'npm',
+        choices: ['npm', 'yarn', 'pnpm'],
+      },
+    ])
+  )?.['pick-pm'];
 };

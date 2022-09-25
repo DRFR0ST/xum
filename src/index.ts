@@ -1,7 +1,9 @@
 import { Command } from 'commander';
 import {
+  addDevHandler,
   addHandler,
   infoHandler,
+  initHandler,
   installHandler,
   removeHandler,
   runHandler,
@@ -12,9 +14,18 @@ const program = new Command('xum');
 
 program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
-  .version('1.0.0-alpha.4');
+  .version('1.0.0-alpha.5');
 
 program.command('info').description('Print detected package manager').action(infoHandler);
+
+program
+  .command('init')
+  .option(
+    '-m, --manager <manager>',
+    'Force using a specified package manager.\nExample: xum install -m pnpm',
+  )
+  .description('Create a new package.json file')
+  .action(initHandler);
 
 program
   .command('install')
@@ -42,6 +53,15 @@ program
   )
   .description('Add dependencies')
   .action(addHandler);
+
+program
+  .command('dev add packages...')
+  .option(
+    '-m, --manager <manager>',
+    'Force using a specified package manager.\nExample: xum install -m pnpm',
+  )
+  .description('Add dev dependencies')
+  .action(addDevHandler);
 
 program
   .command('remove packages...')
