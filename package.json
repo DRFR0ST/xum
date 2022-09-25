@@ -1,6 +1,6 @@
 {
   "name": "@drfrost/xum",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Extremely Universal Manager - A cli app that unifies all Node package managers.",
   "main": "dist/index.js",
   "repository": "https://github.com/DRFR0ST/xum",
@@ -19,10 +19,14 @@
   },
   "dependencies": {
     "commander": "^9.4.0",
+    "inquirer": "^9.1.2",
+    "node-emoji": "^1.11.0",
     "preferred-pm": "^3.0.3"
   },
   "devDependencies": {
+    "@types/inquirer": "^9.0.1",
     "@types/node": "^18.7.18",
+    "@types/node-emoji": "^1.8.2",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
