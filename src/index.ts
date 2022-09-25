@@ -7,8 +7,11 @@ import {
   installHandler,
   removeHandler,
   runHandler,
+  updateHandler,
   wildHandler,
 } from './handlers';
+import { PackageManager } from './types';
+import { execute } from './utils';
 
 const program = new Command('xum');
 
@@ -64,6 +67,15 @@ program
   .action(addDevHandler);
 
 program
+  .command('update packages...')
+  .option(
+    '-m, --manager <manager>',
+    'Force using a specified package manager.\nExample: xum install -m pnpm',
+  )
+  .description('Update dependencies')
+  .action(updateHandler);
+
+program
   .command('remove packages...')
   .option(
     '-m, --manager <manager>',
@@ -81,4 +93,14 @@ program
   .description('Run wildcard commands on your own risk.\nExample: xum wild pack')
   .action(wildHandler);
 
-program.parse(process.argv);
+program
+  .on('command:*', async function (cmd: string[], flags: string[]) {
+    const forcedManager = (flags.filter((flag, i, arr) => {
+      return (
+        flag === '--manager' || flag === '-m' || arr[i - 1] === '--manager' || arr[i - 1] === '-m'
+      );
+    })[1] ?? undefined) as PackageManager;
+
+    execute('', [...cmd, ...flags], forcedManager);
+  })
+  .parse(process.argv);

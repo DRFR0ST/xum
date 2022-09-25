@@ -63,14 +63,14 @@ export async function execute(
     if (code === 0) {
       console.log(emoji.emojify(':white_check_mark:  Done'));
     } else {
-      console.log(emoji.emojify(':x:  '), code?.toString());
+      console.log(emoji.emojify(':x:  '), `Crashed with code ${code?.toString()}`);
     }
   });
 }
 
 export const execCallback = (error: ExecException | null, stdout: string, stderr: string) => {
   if (error) {
-    console.error(`An error occurred during command execution.`, error);
+    console.error(emoji.emojify(':x:  '), `An error occurred during command execution.`, error);
     return;
   }
   console.log(stdout);
@@ -81,7 +81,7 @@ export const packageManagerInfo = async () => {
   const pm = await preferredPM(__dirname);
 
   if (!pm) {
-    console.log('No package manager detected!');
+    console.log(emoji.emojify(':warning:  '), 'No package manager detected!');
     return;
   }
   console.log('Package manager: ', pm?.name);
@@ -91,7 +91,10 @@ export const packageManagerInfo = async () => {
 export const reportAdditionalManagers = (manager: PackageManager) => {
   (Object.keys(PM_LOCK_FILE) as PackageManager[]).forEach((pm: PackageManager) => {
     if (manager !== pm && fileExists('./' + PM_LOCK_FILE[pm]))
-      console.warn(`Using ${manager} but a ${PM_LOCK_FILE[pm]} file was found.`);
+      console.warn(
+        emoji.emojify(':warning:  '),
+        `Using ${manager} but a ${PM_LOCK_FILE[pm]} file was found.`,
+      );
   });
 };
 
