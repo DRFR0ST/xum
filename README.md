@@ -1,5 +1,4 @@
-# xum
-Extremely Universal Manager 
+# Extremely Universal Manager (xum)
 
 A cli app that unifies all Node package managers.
 The command line application automatically detects and maps commands for most popular Node package managers. 
