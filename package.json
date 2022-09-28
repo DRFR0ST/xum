@@ -1,6 +1,6 @@
 {
   "name": "@drfrost/xum",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Extremely Universal Manager - A cli app that unifies all Node package managers.",
   "main": "dist/index.js",
   "repository": "https://github.com/DRFR0ST/xum",
