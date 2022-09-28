@@ -41,9 +41,9 @@ XUM takes the best from both npm and yarn if it comes to commands. The following
 | xum info | Display Info about preferred package managers for cu |
 | xum install | Install dependencies |
 | xum run <command> | Run a script found in package.json. |
-| xum add <packages> | Add specified packages |
-| xum upgrade <packages> | Update specified packages |
-| xum remove <packages> | R |
+| xum add <packages> | Add specified dependencies. |
+| xum upgrade <packages> | Update specified dependencies. |
+| xum remove <packages> | Remove specified dependencies. |
 | xum dev add <packages> | Add specified dev dependencies. |
 | xum init | Initialize new package. Prompt will ask for preferred PM if not provided with the `--manager` flag. |
 | xum wild <command> | Run a wildcard command. Use with caution since your command won't be validated. Use with the `--manager` flag to make sure you run commands for the correct PM. |
