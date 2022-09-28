@@ -32,13 +32,13 @@ The app uses `preferred-pm` package internally which essentially detects 3 packa
 
 ## Usage
 
-XUM takes the best from both npm and yarn if it comes to commands. The following commands are currently implemented:
+XUM takes the best from both npm and yarn. The following commands are currently implemented:
 
 ## Commands
 
 | Command | Description  |
 | --- | --- |
-| xum info | Display Info about preferred package managers for cu |
+| xum info | Display information about preferred package managers for current directory/workspace. |
 | xum install | Install dependencies |
 | xum run <command> | Run a script found in package.json. |
 | xum add <packages> | Add specified dependencies. |
