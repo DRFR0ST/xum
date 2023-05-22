@@ -10,7 +10,6 @@ import {
   runHandler,
   updateHandler,
   listHandler,
-  wildHandler,
 } from './handlers';
 import { PackageManager } from './types';
 import { execute } from './utils';

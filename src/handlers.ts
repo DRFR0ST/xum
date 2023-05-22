@@ -59,9 +59,3 @@ export const listHandler = async (packages: string[], e: unknown, cmd: Command) 
 
   execute(MAP_LIST_COMMAND, packages, forcedManager)
 };
-
-export const wildHandler = async (e: unknown, cmd: Command) => {
-  const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
-
-  execute('', cmd.args, forcedManager, true);
-};
