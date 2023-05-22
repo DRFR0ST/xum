@@ -4,5 +4,4 @@ src
 .eslintrc.cjs
 .prettierignore
 .prettierrc.json
-README.md
 tsconfig.json
