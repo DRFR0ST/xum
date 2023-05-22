@@ -9,6 +9,7 @@ import {
   removeHandler,
   runHandler,
   updateHandler,
+  listHandler,
   wildHandler,
 } from './handlers';
 import { PackageManager } from './types';
@@ -18,7 +19,7 @@ const program = new Command('xum');
 
 program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
-  .version('1.0.0-alpha.6');
+  .version("1.0.0-alpha.7");
 
 program.command('info').description('Print detected package manager').action(infoHandler);
 
@@ -86,27 +87,42 @@ program
   .action(removeHandler);
 
 program
-  .command('wild')
+  .command('list [packages...]')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
-  .description('Run wildcard commands on your own risk.\nExample: xum wild pack')
-  .action(wildHandler);
+  .description('List dependencies')
+  .action(listHandler);
+
+// program
+//   .command('*')
+//   .option(
+//     '-m, --manager <manager>',
+//     'Force using a specified package manager.\nExample: xum install -m pnpm',
+//   )
+//   .description('Run wildcard commands on your own risk.\nExample: xum wild list')
+//   .action(wildHandler);
 
 program
-  .on('command:*', async function (cmd: string[], flags: string[]) {
-    const forcedManager = (flags.filter((flag, i, arr) => {
-      return (
-        flag === '--manager' || flag === '-m' || arr[i - 1] === '--manager' || arr[i - 1] === '-m'
-      );
-    })[1] ?? undefined) as PackageManager;
+  .on('command:*', async function (args: string[], flags: string[]) {
+    const forcedManager = (args.includes('-m') || args.includes('--manager') ? args[args.indexOf('-m') + 1] || args[args.indexOf('--manager') + 1] : "") as PackageManager;
+    const skipPrompt = args.includes('-s') || args.includes('--skip-prompt');
 
     console.warn(
       emoji.emojify(':warning:  '),
-      'Running an unsupported wildcard command. Make sure to specify the package manager using --manager <npm|yarn|pnpm> flag.',
+      'Running an unsupported wildcard command.',
     );
 
-    execute('', [...cmd, ...flags], forcedManager);
+    execute('', args, forcedManager, !skipPrompt);
   })
+  // .option(
+  //   '-m, --manager <manager>',
+  //   'Force using a specified package manager.\nExample: xum install -m pnpm',
+  // )
+  // .option(
+  //   "-s, --skip-prompt",
+  //   "Skip the warning prompt.\nExample: xum install -s"
+  // )
+  .addHelpCommand("*", "Run wildcard commands on your own risk.\nExample: xum audit -- -s -m=npm")
   .parse(process.argv);

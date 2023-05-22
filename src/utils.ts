@@ -1,11 +1,12 @@
-import { ExecException, spawn } from 'node:child_process';
-import preferredPM from 'preferred-pm';
+import { ExecException, exec, spawn } from 'node:child_process';
 import { PackageManager, PackageManagerCommand } from './types';
 import fs from 'fs';
 import path from 'node:path';
 import { PM_LOCK_FILE, SUPPORTED_MANAGERS } from './constants';
 import emoji from 'node-emoji';
 import inquirer from 'inquirer';
+import commandExists from 'command-exists';
+import preferredPM from './preferred-pm';
 
 const __dirname = path.dirname('./');
 
@@ -13,6 +14,7 @@ export async function execute(
   command: string | Record<PackageManager, PackageManagerCommand>,
   args: string[] = [],
   manager?: PackageManager,
+  warn: boolean = false
 ) {
   let pm: { name: PackageManager; version: string };
 
@@ -34,6 +36,7 @@ export async function execute(
       };
     }
   }
+  await ensurePackageManagerExists(pm.name);
   let cmd: string = command as string;
   let flags: string[] = [];
 
@@ -42,13 +45,32 @@ export async function execute(
     cmd = command[pm.name].command;
   }
 
+  const cmdRoot = `${pm.name} ${cmd}`.replace('  ', ' ');
+
+  // Warn the user of the command that is going to be executed.
+  if (warn) {
+    const result = await inquirer.prompt([
+      {
+        name: 'warning',
+        message: `Are you sure, you want to run the following command:\n${emoji.emojify(":arrow_right:")}  ${cmdRoot} ${args.join(' ')} ${flags.join(' ')} ${emoji.emojify(":arrow_left:")} `,
+        type: 'confirm'
+      }
+    ]);
+
+    if (!result.warning) {
+      console.log(emoji.emojify(':x:  Aborting'));
+      return;
+    }
+  }
+
   reportAdditionalManagers(pm.name);
+
   console.log(
     emoji.emojify(':hourglass:  '),
     'Executing',
-    `${pm.name} ${cmd} ${args.join(' ')} ${flags.join(' ')}`,
+    `${cmdRoot} ${args.join(' ')} ${flags.join(' ')}`,
   );
-
+  console.time('Execution time');
   const process = spawn(pm.name, [cmd, ...args, ...flags], { shell: true, stdio: 'inherit' });
 
   process.stdout?.on('data', function (data) {
@@ -65,6 +87,7 @@ export async function execute(
     } else {
       console.log(emoji.emojify(':x:  '), `Crashed with code ${code?.toString()}`);
     }
+    console.timeEnd('Execution time');
   });
 }
 
@@ -86,6 +109,7 @@ export const packageManagerInfo = async () => {
   }
   console.log('Package manager: ', pm?.name);
   console.log('Version: ', pm?.version);
+  console.log('Path: ', pm?.path);
 };
 
 export const reportAdditionalManagers = (manager: PackageManager) => {
@@ -110,8 +134,66 @@ export const promptForPackageManager = async () => {
         name: 'pick-pm',
         message: 'Package manager could not be detected. Which one should be used instead?',
         default: 'npm',
-        choices: ['npm', 'yarn', 'pnpm'],
+        choices: ['npm', 'yarn', 'pnpm', 'bun'],
       },
     ])
   )?.['pick-pm'];
 };
+
+export const ensurePackageManagerExists = async (pm: PackageManager) => {
+  try {
+    return await commandExists(pm);
+  } catch(err) {
+    if(pm !== "npm"){
+      const result = await inquirer.prompt([
+        {
+          name: "should-install",
+          message: `${emoji.emojify(`:warning:  The required package manager is not installed (${pm}).`)} Would you like to install ${pm}? `,
+          type: "confirm"
+        }
+      ])
+  
+      if(result['should-install']) 
+        return await installPackageManager(pm);
+    }
+
+    throw new Error(`Package manager (${pm}) is not installed.`)
+  }
+}
+
+export const installPackageManager = async (pm: PackageManager) => {
+  let cmd = "";
+
+  const isWin = process.platform === "win32";
+
+  switch(pm) {
+    case "pnpm":
+      cmd = "npm i -g pnpm";
+      break;
+    case "yarn":
+      cmd = "npm i -g yarn";
+      break;
+    case "bun":
+      if(isWin)
+        throw new Error("Bun is not yet available for Windows. Use WSL instead and refer to the docs: https://bun.sh/docs");
+      cmd = 'curl -fsSL https://bun.sh/install | bash';
+      break;
+  }
+
+  console.log(`${emoji.emojify(":information_source:  ")} Installing ${pm}...`);
+  await execPromise(cmd);
+  console.log(`${emoji.emojify(":white_check_mark:  ")} ${pm} installed!`);
+}
+
+function execPromise(command: string) {
+  return new Promise(function(resolve, reject) {
+      exec(command, (error, stdout, stderr) => {
+          if (error) {
+              reject(error);
+              return;
+          }
+
+          resolve(stdout.trim());
+      });
+  });
+}

@@ -18,15 +18,23 @@
     "deploy:local": "yarn build && npm pack && npm i drfrost-xum-*.tgz -g"
   },
   "dependencies": {
-    "commander": "^9.4.0",
+    "command-exists": "^1.2.9",
+    "commander": "^10.0.1",
+    "find-up": "^6.3.0",
+    "find-yarn-workspace-root2": "^1.2.49",
     "inquirer": "^9.1.2",
     "node-emoji": "^1.11.0",
-    "preferred-pm": "^3.0.3"
+    "path-exists": "^5.0.0",
+    "which": "^3.0.1",
+    "which-pm": "^2.0.0",
+    "xum": "^0.0.0"
   },
   "devDependencies": {
+    "@types/command-exists": "^1.2.0",
     "@types/inquirer": "^9.0.1",
     "@types/node": "^18.7.18",
     "@types/node-emoji": "^1.8.2",
+    "@types/which": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
