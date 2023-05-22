@@ -18,7 +18,7 @@ const program = new Command('xum');
 
 program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
-  .version("1.0.0-alpha.7");
+  .version("1.0.0-alpha.8");
 
 program.command('info').description('Print detected package manager').action(infoHandler);
 
