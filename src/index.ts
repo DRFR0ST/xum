@@ -10,6 +10,7 @@ import {
   runHandler,
   updateHandler,
   listHandler,
+  scriptsHandler,
 } from './handlers';
 import { PackageManager } from './types';
 import { execute } from './utils';
@@ -18,7 +19,7 @@ const program = new Command('xum');
 
 program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
-  .version("1.0.0-alpha.8");
+  .version("1.0.0-alpha.9");
 
 program.command('info').description('Print detected package manager').action(infoHandler);
 
@@ -33,6 +34,7 @@ program
 
 program
   .command('install')
+  .alias("i")
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -42,6 +44,7 @@ program
 
 program
   .command('run <command>')
+  .alias("r")
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -50,7 +53,7 @@ program
   .action(runHandler);
 
 program
-  .command('add packages...')
+  .command('add <packages...>')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -59,16 +62,26 @@ program
   .action(addHandler);
 
 program
-  .command('dev add packages...')
+  .command('dev <subcommand>')
+  .description("Manage dev dependencies.")
+  .command('add <packages...>')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
   .description('Add dev dependencies')
+  .action(addDevHandler)
+  .parent?.command('remove <packages...>')
+  .option(
+    '-m, --manager <manager>',
+    'Force using a specified package manager.\nExample: xum install -m pnpm',
+  )
+  .description('Remove dev dependencies')
   .action(addDevHandler);
 
 program
-  .command('update packages...')
+  .command('update <packages...>')
+  .alias('up')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -77,7 +90,8 @@ program
   .action(updateHandler);
 
 program
-  .command('remove packages...')
+  .command('remove <packages...>')
+  .alias('rm')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -87,12 +101,18 @@ program
 
 program
   .command('list [packages...]')
+  .alias('ls')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
   .description('List dependencies')
   .action(listHandler);
+
+program
+  .command("scripts")
+  .description("List scripts available in package.json.")
+  .action(scriptsHandler)
 
 // program
 //   .command('*')

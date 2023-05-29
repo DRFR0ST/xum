@@ -5,8 +5,11 @@ import path from 'node:path';
 import { PM_LOCK_FILE, SUPPORTED_MANAGERS } from './constants';
 import emoji from 'node-emoji';
 import inquirer from 'inquirer';
-import commandExists from 'command-exists';
+import { lookpath } from 'lookpath';
 import preferredPM from './preferred-pm';
+import {
+  findNearestPackageJson,
+} from 'find-nearest-package-json'
 
 const __dirname = path.dirname('./');
 
@@ -112,6 +115,32 @@ export const packageManagerInfo = async () => {
   console.log('Path: ', pm?.path);
 };
 
+export const getScriptsList = async () => {
+  try {
+    const pkgJsonNearest = await findNearestPackageJson();
+  
+    let rawdata = fs.readFileSync(pkgJsonNearest.path);
+    let pkgJson = JSON.parse(rawdata as unknown as string);
+  
+    const scriptKeys = Object.keys(pkgJson?.scripts ?? {});
+
+    if(scriptKeys.length > 0) {
+      console.log(emoji.emojify(":information_source:  "), "Scripts found in the nearest package.json:");
+
+      scriptKeys.forEach((key) => {
+        const scriptCmd = pkgJson.scripts[key];
+
+        console.log(emoji.emojify(":arrow_right:  "), `${key}: ${scriptCmd}`);
+      });
+    } else {
+      console.warn(emoji.emojify(":warning:  "), "No scripts were found in the nearest package.json.");
+      return;
+    }
+  } catch(err) {
+    throw new Error("An error occurred while reading the package.json file.");
+  }
+}
+
 export const reportAdditionalManagers = (manager: PackageManager) => {
   (Object.keys(PM_LOCK_FILE) as PackageManager[]).forEach((pm: PackageManager) => {
     if (manager !== pm && fileExists('./' + PM_LOCK_FILE[pm]))
@@ -142,7 +171,7 @@ export const promptForPackageManager = async () => {
 
 export const ensurePackageManagerExists = async (pm: PackageManager) => {
   try {
-    return await commandExists(pm);
+    return await lookpath(pm);
   } catch(err) {
     if(pm !== "npm"){
       const result = await inquirer.prompt([

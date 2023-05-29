@@ -18,11 +18,12 @@
     "deploy:local": "yarn build && npm pack && npm i drfrost-xum-*.tgz -g"
   },
   "dependencies": {
-    "command-exists": "^1.2.9",
     "commander": "^10.0.1",
+    "find-nearest-package-json": "^2.0.1",
     "find-up": "^6.3.0",
     "find-yarn-workspace-root2": "^1.2.49",
     "inquirer": "^9.1.2",
+    "lookpath": "^1.2.2",
     "node-emoji": "^1.11.0",
     "path-exists": "^5.0.0",
     "which": "^3.0.1",

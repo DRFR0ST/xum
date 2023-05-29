@@ -6,7 +6,7 @@ import {
   MAP_UPDATE_COMMAND,
   MAP_LIST_COMMAND,
 } from './constants';
-import { execute, packageManagerInfo } from './utils';
+import { execute, getScriptsList, packageManagerInfo } from './utils';
 
 export const initHandler = async (e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
@@ -51,11 +51,15 @@ export const removeHandler = async (packages: string[], e: unknown, cmd: Command
 };
 
 export const infoHandler = async () => {
-  packageManagerInfo();
+  await packageManagerInfo();
 };
 
 export const listHandler = async (packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
   execute(MAP_LIST_COMMAND, packages, forcedManager)
+};
+
+export const scriptsHandler = async (e:unknown, cmd: Command) => {
+  await getScriptsList();
 };
