@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import {
   MAP_ADD_COMMAND,
   MAP_ADD_DEV_COMMAND,
+  MAP_REMOVE_DEV_COMMAND,
   MAP_REMOVE_COMMAND,
   MAP_UPDATE_COMMAND,
   MAP_LIST_COMMAND,
@@ -11,19 +12,19 @@ import { execute, getScriptsList, packageManagerInfo } from './utils';
 export const initHandler = async (e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute('init', undefined, forcedManager);
+  execute('init', [...cmd.args], forcedManager);
 };
 
 export const installHandler = async (e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute('install', undefined, forcedManager);
+  execute('install', [...cmd.args], forcedManager);
 };
 
 export const runHandler = async (input: string, e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute('run', [input], forcedManager);
+  execute('run', [input, ...cmd.args], forcedManager);
 };
 
 export const addHandler = async (packages: string[], e: unknown, cmd: Command) => {
@@ -35,19 +36,25 @@ export const addHandler = async (packages: string[], e: unknown, cmd: Command) =
 export const addDevHandler = async (ee: unknown, packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute(MAP_ADD_DEV_COMMAND, packages, forcedManager);
+  execute(MAP_ADD_DEV_COMMAND, [...cmd.args], forcedManager);
+};
+
+export const removeDevHandler = async (ee: unknown, packages: string[], e: unknown, cmd: Command) => {
+  const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
+
+  execute(MAP_REMOVE_DEV_COMMAND, [...cmd.args], forcedManager);
 };
 
 export const updateHandler = async (packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute(MAP_UPDATE_COMMAND, packages, forcedManager);
+  execute(MAP_UPDATE_COMMAND, [...cmd.args], forcedManager);
 };
 
 export const removeHandler = async (packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute(MAP_REMOVE_COMMAND, packages, forcedManager);
+  execute(MAP_REMOVE_COMMAND, [...cmd.args], forcedManager);
 };
 
 export const infoHandler = async () => {
@@ -57,7 +64,7 @@ export const infoHandler = async () => {
 export const listHandler = async (packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute(MAP_LIST_COMMAND, packages, forcedManager)
+  execute(MAP_LIST_COMMAND, [...cmd.args], forcedManager)
 };
 
 export const scriptsHandler = async (e:unknown, cmd: Command) => {

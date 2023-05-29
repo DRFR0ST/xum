@@ -10,6 +10,7 @@ import preferredPM from './preferred-pm';
 import {
   findNearestPackageJson,
 } from 'find-nearest-package-json'
+import chalk from 'chalk';
 
 const __dirname = path.dirname('./');
 
@@ -125,12 +126,12 @@ export const getScriptsList = async () => {
     const scriptKeys = Object.keys(pkgJson?.scripts ?? {});
 
     if(scriptKeys.length > 0) {
-      console.log(emoji.emojify(":information_source:  "), "Scripts found in the nearest package.json:");
+      console.log(emoji.emojify(":information_source:  "), "Scripts found in the nearest package.json:\n");
 
       scriptKeys.forEach((key) => {
         const scriptCmd = pkgJson.scripts[key];
 
-        console.log(emoji.emojify(":arrow_right:  "), `${key}: ${scriptCmd}`);
+        console.log(emoji.emojify(":arrow_right:  "), chalk.bold(key), chalk.dim(`${scriptCmd}`));
       });
     } else {
       console.warn(emoji.emojify(":warning:  "), "No scripts were found in the nearest package.json.");
@@ -146,7 +147,7 @@ export const reportAdditionalManagers = (manager: PackageManager) => {
     if (manager !== pm && fileExists('./' + PM_LOCK_FILE[pm]))
       console.warn(
         emoji.emojify(':warning:  '),
-        `Using ${manager} but a ${PM_LOCK_FILE[pm]} file was found.`,
+        ` Using ${manager} but a ${PM_LOCK_FILE[pm]} file was found.`,
       );
   });
 };
@@ -171,7 +172,11 @@ export const promptForPackageManager = async () => {
 
 export const ensurePackageManagerExists = async (pm: PackageManager) => {
   try {
-    return await lookpath(pm);
+    const pmPath = await lookpath(pm);
+
+    if(!pmPath) throw new Error(`Package manager (${pm}) is not installed.`)
+
+    return true;
   } catch(err) {
     if(pm !== "npm"){
       const result = await inquirer.prompt([
@@ -186,7 +191,7 @@ export const ensurePackageManagerExists = async (pm: PackageManager) => {
         return await installPackageManager(pm);
     }
 
-    throw new Error(`Package manager (${pm}) is not installed.`)
+    throw err;
   }
 }
 
@@ -211,7 +216,7 @@ export const installPackageManager = async (pm: PackageManager) => {
 
   console.log(`${emoji.emojify(":information_source:  ")} Installing ${pm}...`);
   await execPromise(cmd);
-  console.log(`${emoji.emojify(":white_check_mark:  ")} ${pm} installed!`);
+  console.log(`${emoji.emojify(":white_check_mark:  ")} ${pm} installed!\n---\n`);
 }
 
 function execPromise(command: string) {

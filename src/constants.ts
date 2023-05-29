@@ -47,6 +47,25 @@ export const MAP_ADD_DEV_COMMAND: Record<PackageManager, PackageManagerCommand> 
   },
 };
 
+export const MAP_REMOVE_DEV_COMMAND: Record<PackageManager, PackageManagerCommand> = {
+  npm: {
+    command: 'uninstall',
+    flags: ['--save-dev'],
+  },
+  yarn: {
+    command: 'remove',
+    flags: ['-D'],
+  },
+  pnpm: {
+    command: 'uninstall',
+    flags: ['--save-dev'],
+  },
+  bun: {
+    command: 'uninstall',
+    flags: ['--save-dev'],
+  },
+};
+
 export const MAP_REMOVE_COMMAND: Record<PackageManager, PackageManagerCommand> = {
   npm: {
     command: 'uninstall',

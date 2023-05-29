@@ -11,6 +11,7 @@ import {
   updateHandler,
   listHandler,
   scriptsHandler,
+  removeDevHandler,
 } from './handlers';
 import { PackageManager } from './types';
 import { execute } from './utils';
@@ -21,7 +22,8 @@ program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
   .version("1.0.0-alpha.9");
 
-program.command('info').description('Print detected package manager').action(infoHandler);
+program.command('info')
+  .description('Print detected package manager').action(infoHandler);
 
 program
   .command('init')
@@ -29,6 +31,7 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Create a new package.json file')
   .action(initHandler);
 
@@ -39,6 +42,7 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Install dependencies')
   .action(installHandler);
 
@@ -49,6 +53,7 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Run a command defined in package.json')
   .action(runHandler);
 
@@ -58,26 +63,29 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Add dependencies')
   .action(addHandler);
 
-program
-  .command('dev <subcommand>')
-  .description("Manage dev dependencies.")
-  .command('add <packages...>')
-  .option(
-    '-m, --manager <manager>',
-    'Force using a specified package manager.\nExample: xum install -m pnpm',
-  )
-  .description('Add dev dependencies')
-  .action(addDevHandler)
-  .parent?.command('remove <packages...>')
-  .option(
-    '-m, --manager <manager>',
-    'Force using a specified package manager.\nExample: xum install -m pnpm',
-  )
-  .description('Remove dev dependencies')
-  .action(addDevHandler);
+// program
+//   .command('dev add <packages...>')
+//   .option(
+//     '-m, --manager <manager>',
+//     'Force using a specified package manager.\nExample: xum install -m pnpm',
+//   )
+//   .allowUnknownOption()
+//   .description('Add dev dependencies')
+//   .action(addDevHandler)
+
+// program
+//   .command('dev remove <packages...>')
+//   .option(
+//     '-m, --manager <manager>',
+//     'Force using a specified package manager.\nExample: xum install -m pnpm',
+//   )
+//   .allowUnknownOption()
+//   .description('Remove dev dependencies')
+//   .action(removeDevHandler);
 
 program
   .command('update <packages...>')
@@ -86,6 +94,7 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Update dependencies')
   .action(updateHandler);
 
@@ -96,6 +105,7 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('Remove dependencies')
   .action(removeHandler);
 
@@ -106,11 +116,13 @@ program
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
   )
+  .allowUnknownOption()
   .description('List dependencies')
   .action(listHandler);
 
 program
   .command("scripts")
+  .allowUnknownOption()
   .description("List scripts available in package.json.")
   .action(scriptsHandler)
 
@@ -120,7 +132,8 @@ program
 //     '-m, --manager <manager>',
 //     'Force using a specified package manager.\nExample: xum install -m pnpm',
 //   )
-//   .description('Run wildcard commands on your own risk.\nExample: xum wild list')
+//   .allowUnknownOption()
+ // .description('Run wildcard commands on your own risk.\nExample: xum wild list')
 //   .action(wildHandler);
 
 program

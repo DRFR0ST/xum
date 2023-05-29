@@ -18,6 +18,7 @@
     "deploy:local": "yarn build && npm pack && npm i drfrost-xum-*.tgz -g"
   },
   "dependencies": {
+    "chalk": "^5.2.0",
     "commander": "^10.0.1",
     "find-nearest-package-json": "^2.0.1",
     "find-up": "^6.3.0",
@@ -27,11 +28,9 @@
     "node-emoji": "^1.11.0",
     "path-exists": "^5.0.0",
     "which": "^3.0.1",
-    "which-pm": "^2.0.0",
-    "xum": "^0.0.0"
+    "which-pm": "^2.0.0"
   },
   "devDependencies": {
-    "@types/command-exists": "^1.2.0",
     "@types/inquirer": "^9.0.1",
     "@types/node": "^18.7.18",
     "@types/node-emoji": "^1.8.2",
