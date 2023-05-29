@@ -5,3 +5,6 @@ src
 .prettierignore
 .prettierrc.json
 tsconfig.json
+index.d.ts
+.github
+npm-debug.log

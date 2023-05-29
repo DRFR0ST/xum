@@ -7,13 +7,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       # Setup .npmrc file to publish to npm
-      - uses: actions/setup-node@v3
+      - name: Setup NPM
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install
-      - run: npm run build
-      - run: npm publish
+
+      - name: Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+
+      - name: Install Dependencies
+        run: bun install -p
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish to NPM
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to GitHub Packages
+        run: npm publish --registry=https://npm.pkg.github.com/
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

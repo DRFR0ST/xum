@@ -6,7 +6,7 @@ export const PM_LOCK_FILE: Record<PackageManager, string> = {
   npm: 'package-lock.json',
   yarn: 'yarn.lock',
   pnpm: 'pnpm-lock.yaml',
-  bun: 'bun.lockb'
+  bun: 'bun.lockb',
 };
 
 export const MAP_ADD_COMMAND: Record<PackageManager, PackageManagerCommand> = {
@@ -25,7 +25,7 @@ export const MAP_ADD_COMMAND: Record<PackageManager, PackageManagerCommand> = {
   bun: {
     command: 'install',
     flags: [],
-  }
+  },
 };
 
 export const MAP_ADD_DEV_COMMAND: Record<PackageManager, PackageManagerCommand> = {

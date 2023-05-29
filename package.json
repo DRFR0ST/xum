@@ -13,9 +13,10 @@
   },
   "preferGlobal": true,
   "scripts": {
-    "build": "ttsc --project tsconfig.json",
-    "start": "node dist/index.js",
-    "deploy:local": "yarn build && npm pack && npm i drfrost-xum-*.tgz -g"
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun --splitting --minify",
+    "deploy:local": "bun run clean && bun run build && npm pack && npm i drfrost-xum-*.tgz -g",
+    "format": "prettier --write ./src",
+    "clean": "bun x rimraf ./dist && bun x rimraf ./drfrost-xum-*.tgz"
   },
   "dependencies": {
     "chalk": "^5.2.0",
@@ -32,17 +33,14 @@
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.1",
-    "@types/node": "^18.7.18",
     "@types/node-emoji": "^1.8.2",
     "@types/which": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
-    "@zoltu/typescript-transformer-append-js-extension": "^1.0.1",
+    "bun-types": "^0.6.4",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
     "prettier": "2.7.1",
-    "ts-node": "^10.9.1",
-    "ttypescript": "^1.5.13",
     "typescript": "^4.8.3"
   }
 }

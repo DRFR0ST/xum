@@ -9,4 +9,4 @@ export type PackageManagerInfo = {
   name: PackageManager;
   version: string;
   path: string;
-}
+};

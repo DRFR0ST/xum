@@ -7,7 +7,9 @@ import {
   MAP_UPDATE_COMMAND,
   MAP_LIST_COMMAND,
 } from './constants';
-import { execute, getScriptsList, packageManagerInfo } from './utils';
+import { packageManagerInfo } from './commands/pm-info';
+import { getScriptsList } from './commands/pkg-json-scripts';
+import { execute } from './commands/execute';
 
 export const initHandler = async (e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
@@ -39,7 +41,12 @@ export const addDevHandler = async (ee: unknown, packages: string[], e: unknown,
   execute(MAP_ADD_DEV_COMMAND, [...cmd.args], forcedManager);
 };
 
-export const removeDevHandler = async (ee: unknown, packages: string[], e: unknown, cmd: Command) => {
+export const removeDevHandler = async (
+  ee: unknown,
+  packages: string[],
+  e: unknown,
+  cmd: Command,
+) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
   execute(MAP_REMOVE_DEV_COMMAND, [...cmd.args], forcedManager);
@@ -64,9 +71,9 @@ export const infoHandler = async () => {
 export const listHandler = async (packages: string[], e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute(MAP_LIST_COMMAND, [...cmd.args], forcedManager)
+  execute(MAP_LIST_COMMAND, [...cmd.args], forcedManager);
 };
 
-export const scriptsHandler = async (e:unknown, cmd: Command) => {
+export const scriptsHandler = async (e: unknown, cmd: Command) => {
   await getScriptsList();
 };

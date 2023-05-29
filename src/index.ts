@@ -1,7 +1,6 @@
 import { Command } from 'commander';
 import emoji from 'node-emoji';
 import {
-  addDevHandler,
   addHandler,
   infoHandler,
   initHandler,
@@ -11,19 +10,17 @@ import {
   updateHandler,
   listHandler,
   scriptsHandler,
-  removeDevHandler,
 } from './handlers';
 import { PackageManager } from './types';
-import { execute } from './utils';
+import { execute } from './commands/execute';
 
 const program = new Command('xum');
 
 program
   .description('Extremely Universal Manager - A cli app that unifies all Node package managers.')
-  .version("1.0.0-alpha.9");
+  .version('1.0.0-alpha.9');
 
-program.command('info')
-  .description('Print detected package manager').action(infoHandler);
+program.command('info').description('Print detected package manager').action(infoHandler);
 
 program
   .command('init')
@@ -37,7 +34,7 @@ program
 
 program
   .command('install')
-  .alias("i")
+  .alias('i')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -48,7 +45,7 @@ program
 
 program
   .command('run <command>')
-  .alias("r")
+  .alias('r')
   .option(
     '-m, --manager <manager>',
     'Force using a specified package manager.\nExample: xum install -m pnpm',
@@ -121,10 +118,10 @@ program
   .action(listHandler);
 
 program
-  .command("scripts")
+  .command('scripts')
   .allowUnknownOption()
-  .description("List scripts available in package.json.")
-  .action(scriptsHandler)
+  .description('List scripts available in package.json.')
+  .action(scriptsHandler);
 
 // program
 //   .command('*')
@@ -133,18 +130,19 @@ program
 //     'Force using a specified package manager.\nExample: xum install -m pnpm',
 //   )
 //   .allowUnknownOption()
- // .description('Run wildcard commands on your own risk.\nExample: xum wild list')
+// .description('Run wildcard commands on your own risk.\nExample: xum wild list')
 //   .action(wildHandler);
 
 program
   .on('command:*', async function (args: string[], flags: string[]) {
-    const forcedManager = (args.includes('-m') || args.includes('--manager') ? args[args.indexOf('-m') + 1] || args[args.indexOf('--manager') + 1] : "") as PackageManager;
+    const forcedManager = (
+      args.includes('-m') || args.includes('--manager')
+        ? args[args.indexOf('-m') + 1] || args[args.indexOf('--manager') + 1]
+        : ''
+    ) as PackageManager;
     const skipPrompt = args.includes('-s') || args.includes('--skip-prompt');
 
-    console.warn(
-      emoji.emojify(':warning:  '),
-      'Running an unsupported wildcard command.',
-    );
+    console.warn(emoji.emojify(':warning:  '), 'Running an unsupported wildcard command.');
 
     execute('', args, forcedManager, !skipPrompt);
   })
@@ -156,5 +154,5 @@ program
   //   "-s, --skip-prompt",
   //   "Skip the warning prompt.\nExample: xum install -s"
   // )
-  .addHelpCommand("*", "Run wildcard commands on your own risk.\nExample: xum audit -- -s -m=npm")
+  .addHelpCommand('*', 'Run wildcard commands on your own risk.\nExample: xum audit -- -s -m=npm')
   .parse(process.argv);
