@@ -24,7 +24,7 @@ export const installHandler = async (e: unknown, cmd: Command) => {
 export const runHandler = async (input: string, e: unknown, cmd: Command) => {
   const forcedManager = cmd?.getOptionValue?.('manager')?.replace('=', '');
 
-  execute('run', [input, ...cmd.args], forcedManager);
+  execute('run', [...cmd.args], forcedManager);
 };
 
 export const addHandler = async (packages: string[], e: unknown, cmd: Command) => {
